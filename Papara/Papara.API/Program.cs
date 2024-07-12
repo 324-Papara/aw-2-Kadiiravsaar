@@ -1,5 +1,7 @@
 
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Papara.Business.Validations;
 using Papara.Data.Context;
 using Papara.Data.UnitOfWork;
 using System.Text.Json.Serialization;
@@ -14,7 +16,10 @@ namespace Papara.API
 
 			// Add services to the container.
 
-			builder.Services.AddControllers().AddJsonOptions(options =>
+			//builder.Services.AddFluentValidation(fv => fv.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly())); isim vermeden bütün validatörleri dahil etmek
+			builder.Services.AddControllers()
+				.AddFluentValidation(x => x.RegisterValidatorsFromAssemblyContaining<CustomerValidator>())
+				.AddJsonOptions(options =>
 			{
 				options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 				options.JsonSerializerOptions.WriteIndented = true;
