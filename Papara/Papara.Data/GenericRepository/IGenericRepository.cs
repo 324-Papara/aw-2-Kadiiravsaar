@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,14 +8,29 @@ using System.Threading.Tasks;
 
 namespace Papara.Data.GenericRepository
 {
-	public interface IGenericRepository<TEntity> where TEntity : class
+
+	public interface IGenericRepository<TEntity> : IQuery<TEntity> where TEntity : class
 	{
 		Task Save();
+
 		Task<TEntity?> GetById(long Id);
+		Task<TEntity> Get(
+			long id,
+			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null);
+
+		Task<List<TEntity>> Where(Expression<Func<TEntity, bool>> filter); // belirli bir koşula gçre <List<TEntity>> getir. Nesneleri filtrelemek için de expression kullandım.  
 		Task Insert(TEntity entity);
 		Task Update(TEntity entity);
+
 		Task Delete(TEntity entity);
 		Task Delete(long Id);
-		Task<List<TEntity>> GetAll();
-	}
+
+		Task<List<TEntity>> GetAll();	
+		Task<List<TEntity>> GetAll(
+			Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null
+			); // Ef Core'da navigation propların yani ilişkili tabloların sorguya dahil edilmesi için (IIncludableQueryable) kullandım
+			   // Ana nesnem ilk yüklendiğinde ilişkili nesneler de yüklensin (eager loading)
+			   // Func kullandım çünkü nesneyi saklayıp gerektiğinde çağırmak istiyorum. IQueryable<TEntity> girdi alıp, IIncludableQueryable<TEntity, object> tipinde çıktı alacağım.
+	}          // include = null dedim çünkü include yapmak istemeyebilirim yani zorunda değilim
+			   // TEntity şuan için customer oldu 
 }

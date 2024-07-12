@@ -8,18 +8,17 @@ namespace Papara.Data.UnitOfWork
 	{
 		private readonly PaparaMsSqlDbContext _context;
 
-		public IGenericRepository<Customer> CustomerRepository { get; }
+		
+		public IGenericRepository<Customer> CustomerRepository { get; } 
 		public IGenericRepository<CustomerDetail> CustomerDetailRepository { get; }
 		public IGenericRepository<CustomerAddress> CustomerAddressRepository { get; }
 		public IGenericRepository<CustomerPhone> CustomerPhoneRepository { get; }
 
-		//ICustomerRepository CustomerRepository { get; }  => Custom Sorgular eklemek istersem bunu kullanıp (IGenericRepository<Customer> CustomerRepository { get; }) iptal edicem
 
 		public UnitOfWork(PaparaMsSqlDbContext context)
 		{
 			_context = context;
 
-			//CustomerRepository = new CustomerRepository(_context);
 			CustomerRepository = new GenericRepository<Customer>(_context);
 			CustomerDetailRepository = new GenericRepository<CustomerDetail>(_context);
 			CustomerAddressRepository = new GenericRepository<CustomerAddress>(_context);

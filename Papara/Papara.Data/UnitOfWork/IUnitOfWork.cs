@@ -13,7 +13,6 @@ namespace Papara.Data.UnitOfWork
 	{
 		Task Complete();
 
-		//ICustomerRepository CustomerRepository { get; }  => Custom Sorgular eklemek istersem bunu kullanıp (IGenericRepository<Customer> CustomerRepository { get; }) iptal edicem
 		IGenericRepository<Customer> CustomerRepository { get; }
 		IGenericRepository<CustomerDetail> CustomerDetailRepository { get; }
 		IGenericRepository<CustomerAddress> CustomerAddressRepository { get; }

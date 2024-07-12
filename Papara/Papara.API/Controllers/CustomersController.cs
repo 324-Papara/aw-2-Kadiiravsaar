@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Papara.Data.Domain;
 using Papara.Data.UnitOfWork;
 
@@ -16,18 +17,49 @@ namespace Papara.API.Controllers
 			_unitOfWork = unitOfWork;
 		}
 
-		[HttpGet]
-		public async Task<List<Customer>> GetAll()
+
+
+		[HttpGet("GetAllCustomersWithDetails")]
+		public async Task<List<Customer>> GetAllCustomersWithDetails()
 		{
-			var entityList = await _unitOfWork.CustomerRepository.GetAll();
-			return entityList;
+			var customers = await _unitOfWork.CustomerRepository.GetAll(
+			include: x => x.Include(c => c.CustomerDetail)
+						   .Include(c => c.CustomerAddresses)
+						   .Include(c => c.CustomerPhones));
+
+			return customers;
 		}
 
-		[HttpGet("{customerId}")]
-		public async Task<Customer> Get(long customerId)
+		[HttpGet("GetAllCustomers")]
+		public async Task<List<Customer>> GetAllCustomers()
 		{
-			var entity = await _unitOfWork.CustomerRepository.GetById(customerId);
-			return entity;
+			var customers = await _unitOfWork.CustomerRepository.GetAll();
+			return customers;
+		}
+
+
+		[HttpGet("GetCustomerByIdWithDetails/{customerId}")]
+		public async Task<Customer> GetCustomerByIdWithDetails(long customerId)
+		{
+			var customersId = await _unitOfWork.CustomerRepository.Get(
+					customerId,
+					include: x => x.Include(c => c.CustomerDetail
+					));
+			return customersId;
+		}
+
+		[HttpGet("GetCustomerById/{customerId}")]
+		public async Task<Customer> GetCustomerById(long customerId)
+		{
+			var customersId = await _unitOfWork.CustomerRepository.GetById(customerId);
+			return customersId;
+		}
+
+		[HttpGet("GetCustomersByFirstName")]
+		public async Task<List<Customer>> GetCustomersByFirstName(string firstName)
+		{
+			var customerName = await _unitOfWork.CustomerRepository.Where(c => c.FirstName == firstName);
+			return customerName;
 		}
 
 		[HttpPost]
@@ -52,5 +84,7 @@ namespace Papara.API.Controllers
 			await _unitOfWork.CustomerRepository.Delete(customerId);
 			await _unitOfWork.Complete();
 		}
+
+
 	}
 }
